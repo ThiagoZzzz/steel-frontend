@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { getFeaturedProducts } from '../../data/products'
 import Carousel from '../../components/common/carousel'
+import CarouselSkeleton from '../../components/skeletons/CarouselSkeleton'
 
 import {
   HomeContainer,
@@ -16,7 +16,11 @@ import {
   FeaturedDivider,
 } from './style'
 
+// TODO: reemplazar con un hook de API para productos destacados
+// Ejemplo: const { data: featuredProducts, isPending } = useFeaturedProducts()
+import { getFeaturedProducts } from '../../data/products'
 const featuredProducts = getFeaturedProducts()
+const isPending = false // ← cambiar a isPending del hook cuando se implemente
 
 const Home = () => {
   const navigate = useNavigate()
@@ -36,7 +40,7 @@ const Home = () => {
 
         <HeroData>
           <HeroEyebrow>EST. 2010 — Luxury Timepieces</HeroEyebrow>
-          <h1>Elegance &<br />Precision.</h1>
+          <h1 style={{ color: '#f0ede8' }}>Elegance &<br />Precision.</h1>
           <p>
             If you want a watch that matches your attitude,
             your outfit, and your potential — you're in the right place.
@@ -58,7 +62,11 @@ const Home = () => {
         <FeaturedDivider />
       </FeaturedBlock>
 
-      <Carousel products={featuredProducts} />
+      {isPending ? (
+        <CarouselSkeleton count={4} />
+      ) : (
+        <Carousel products={featuredProducts} />
+      )}
 
     </HomeContainer>
   )

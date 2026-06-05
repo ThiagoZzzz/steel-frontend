@@ -5,7 +5,7 @@ const ToastContext = createContext(null);
 
 let toastId = 0;
 
-export const ToastProvider = ({ children }) => {
+const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
   const showToast = useCallback((message, duration = 2000) => {
@@ -52,6 +52,8 @@ export const ToastProvider = ({ children }) => {
     </ToastContext.Provider>
   );
 };
+
+export default ToastProvider;
 
 // hook de acceso al contexto
 export const useToast = () => {

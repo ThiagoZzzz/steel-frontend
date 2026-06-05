@@ -86,6 +86,7 @@ export const ProductCard = styled.article`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Fix para evitar que el aspect-ratio rompa el grid y fuerce 1 sola columna */
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {

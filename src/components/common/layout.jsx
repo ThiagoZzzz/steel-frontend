@@ -13,6 +13,7 @@ import {
     StyledNav,
     NavTop,
     NavItem,
+    NavLeft,
     MenuList,
     Footer,
     FooterSection,
@@ -39,34 +40,41 @@ import {
     DrawerCheckoutBtn,
     DrawerClearBtn,
 } from './styles/layout'
+import ThemeToggle from './ThemeToggle'
+
 
 import { useMenu } from '../../contexts/MenuContext'
 import { useCart } from '../../contexts/CartContext'
 import { useCartActions } from '../../hooks/useCartActions'
+import { useAuth } from '../../contexts/AuthContext'
 
 const Layout = ({ children }) => {
     const { isMenuOpen, isDrawerOpen, navRef, setIsMenuOpen, toggleMenu, openDrawer, closeDrawer } = useMenu();
     const { cartCount, cartItems, subtotal, removeFromCart, changeQuantity } = useCart();
     const { handleCheckout, handleClearCart } = useCartActions();
+    const { user, isAuthenticated } = useAuth();
 
     return (
         <>
             <NavbarContainer>
                 <StyledNav ref={navRef}>
                     <NavTop>
+                    <NavLeft>
                         <NavItem
                             as="button"
                             onClick={toggleMenu}
                             className="menu"
                             aria-expanded={isMenuOpen}
                             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                            style={{ background: 'none', border: 'none', padding: 0 }}
+                            style={{ background: 'none', border: 'none', padding: 0, flex: 'none' }}
                         >
                             {isMenuOpen
                                 ? <XIcon size={24} color="currentColor" weight="bold" />
                                 : <ListIcon size={24} color="currentColor" weight="bold" />
                             }
                         </NavItem>
+                        <ThemeToggle />
+                    </NavLeft>
 
                         <NavItem as={Link} to={'/'} className="logo" style={{ textDecoration: 'none' }}>
                             <img src="/logo.png" alt="STEEL" className="brand-logo" />
@@ -90,7 +98,9 @@ const Layout = ({ children }) => {
                         <li><Link to="/products" onClick={() => setIsMenuOpen(false)}>Collection</Link></li>
                         <li><Link to="/about-us" onClick={() => setIsMenuOpen(false)}>About</Link></li>
                         <li><Link to="/contact-us" onClick={() => setIsMenuOpen(false)}>Contact</Link></li>
-                        <li><Link to="/login" onClick={() => setIsMenuOpen(false)}>Access</Link></li>
+                        {user?.roles?.includes('admin') && <li><Link to="/admin" onClick={() => setIsMenuOpen(false)}>Admin</Link></li>}
+                        {isAuthenticated && <li><Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link></li>}
+                        {!isAuthenticated && <li><Link to="/login" onClick={() => setIsMenuOpen(false)}>Access</Link></li>}
                     </MenuList>
                 </StyledNav>
             </NavbarContainer>
@@ -154,7 +164,7 @@ const Layout = ({ children }) => {
                                 <span>Subtotal</span>
                                 <span>${subtotal}</span>
                             </DrawerSummaryRow>
-                            <DrawerCheckoutBtn onClick={handleCheckout}>
+                            <DrawerCheckoutBtn onClick={() => { handleCheckout(); closeDrawer(); }}>
                                 Proceed to Checkout
                             </DrawerCheckoutBtn>
                             <DrawerClearBtn onClick={handleClearCart}>

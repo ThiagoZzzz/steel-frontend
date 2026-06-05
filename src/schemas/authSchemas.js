@@ -50,3 +50,28 @@ export const registerSchema = baseUserSchema.refine(
     path: ["confirmPassword"],
   }
 );
+
+// profile update 
+export const profileUpdateSchema = z.object({
+  name: nameValidator,
+  lastName: lastNameValidator
+});
+
+// profile->password update
+export const passwordUpdateSchema = z.object({
+  currentPassword: passwordValidator,
+  newPassword: passwordValidator,
+  confirmNewPassword: z.string({ required_error: 'You must confirm your password' })
+}).refine(
+  (data) => data.newPassword !== data.currentPassword,
+  {
+    message: "New password must be different from current password",
+    path: ["newPassword"],
+  }
+).refine(
+  (data) => data.newPassword === data.confirmNewPassword,
+  {
+    message: "Passwords don't match",
+    path: ["confirmNewPassword"],
+  }
+);

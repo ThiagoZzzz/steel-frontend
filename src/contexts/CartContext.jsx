@@ -12,7 +12,7 @@ function loadCartFromStorage() {
 
 export const CartContext = createContext(null);
 
-export const CartProvider = ({ children }) => {
+const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(loadCartFromStorage);
 
   // persistir en localStorage cada vez que cambie el carrito
@@ -81,6 +81,8 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+export default CartProvider;
 
 // hook de acceso al contexto
 export const useCart = () => {

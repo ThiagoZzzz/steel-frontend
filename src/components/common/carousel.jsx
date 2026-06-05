@@ -14,8 +14,6 @@ import {
 
 import { useCartActions } from '../../hooks/useCartActions';
 
-// const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-
 const Carousel = ({ products = [] }) => {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
@@ -34,8 +32,6 @@ const Carousel = ({ products = [] }) => {
     }
     setActive(newIndex);
   }, [products.length]);
-
-
 
 
   useEffect(() => {

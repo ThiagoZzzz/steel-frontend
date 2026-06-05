@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema } from '../../schemas/authSchemas'
 import { useToast } from '../../contexts/ToastContext'
+import { useRegister } from '../../hooks/queries/useAuth'
+import { useNavigate } from 'react-router-dom'
+
 
 import {
   LoginContainer,
@@ -13,14 +16,17 @@ import {
   LoginTitle,
   LoginSubtitle,
   LoginForm,
-  InputGroup,
-  InputRow,
-  InputError,
-  BtnPrimary,
   CardFooter,
   LinkSignup,
-  SuccessBanner,
 } from '../login/style'
+
+import {
+  InputGroup,
+  FormRow,
+  InputError,
+  BtnPrimaryFull,
+  SuccessBanner,
+} from '../../components/common/styles/shared'
 
 
 
@@ -28,6 +34,11 @@ const SignUp = () => {
   const { showToast } = useToast()
   const [showSuccess, setShowSuccess] = useState(false)
 
+  const navigate = useNavigate();
+  // query hook
+  const { mutate: registerMutation } = useRegister()
+
+  // RHF
   const {
     register,
     handleSubmit,
@@ -40,12 +51,18 @@ const SignUp = () => {
   })
 
   const onValidSubmit = (data) => {
-    setShowSuccess(true)
-    showToast('Account created!')
-    setTimeout(() => {
-      setShowSuccess(false)
-      reset()
-    }, 2000)
+    registerMutation(data, {
+      onSuccess: (response) => {
+        showToast(response.message)
+        setTimeout(() => {
+          navigate('/login')
+        }, 500)
+      },
+      onError: (error) => {
+        showToast(error.response?.data?.message || 'Registration failed')
+        reset()
+      },
+    })
   }
 
   return (
@@ -67,7 +84,7 @@ const SignUp = () => {
               <LoginForm onSubmit={handleSubmit(onValidSubmit)}>
 
 
-                <InputRow>
+                <FormRow>
                   <InputGroup $hasError={touched.name && !!errors.name} $isValid={touched.name && !errors.name}>
                     <label htmlFor="signup-name">Name</label>
                     <input
@@ -95,7 +112,7 @@ const SignUp = () => {
                       <InputError>{errors.lastName.message}</InputError>
                     )}
                   </InputGroup>
-                </InputRow>
+                </FormRow>
 
                 <InputGroup $hasError={touched.email && !!errors.email} $isValid={touched.email && !errors.email}>
                   <label htmlFor="signup-email">Email address</label>
@@ -140,7 +157,9 @@ const SignUp = () => {
                   )}
                 </InputGroup>
 
-                <BtnPrimary type="submit">Continue &rarr;</BtnPrimary>
+                <BtnPrimaryFull type="submit" disabled={registerMutation.isPending}>
+                  {registerMutation.isPending ? 'Creating...' : 'Continue →'}
+                </BtnPrimaryFull>
               </LoginForm>
             </>
           )}

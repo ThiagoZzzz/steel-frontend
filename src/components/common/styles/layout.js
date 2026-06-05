@@ -19,12 +19,12 @@ export const StyledNav = styled.nav`
   transform: translateX(-50%);
   width: clamp(260px, 30%, 320px);
   padding: 0 1.25rem;
-  background: rgba(10, 10, 10, 0.88);
+  background: var(--nav-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--gold-border);
   border-radius: 6px;
-  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(201,168,76,0.1);
+  box-shadow: var(--nav-shadow);
   z-index: 1000;
   transition: all 0.4s ease-in-out;
 
@@ -43,6 +43,32 @@ export const NavTop = styled.div`
   img {
     width: 34px;
     filter: brightness(1.1);
+  }
+`
+
+export const NavLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex: 1;
+`
+
+export const ThemeToggleBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  border-radius: 4px;
+
+  &:hover {
+    color: var(--gold);
   }
 `
 

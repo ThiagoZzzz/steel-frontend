@@ -1,9 +1,11 @@
 import { useCart } from '../contexts/CartContext';
 import { useToast } from '../contexts/ToastContext';
+import { useNavigate } from 'react-router-dom';
 
 export const useCartActions = () => {
     const { cartItems, addToCart, clearCart } = useCart();
     const { showToast } = useToast();
+    const navigate = useNavigate();
 
     const handleAddToCart = (product) => {
         addToCart(product);
@@ -24,7 +26,7 @@ export const useCartActions = () => {
             showToast('The cart is empty');
             return;
         }
-        showToast('Checkout coming soon!');
+        navigate('/checkout');
     };
 
     return { handleAddToCart, handleClearCart, handleCheckout };

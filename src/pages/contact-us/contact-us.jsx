@@ -16,11 +16,14 @@ import {
   BrandName,
   ContactSubtitle,
   ContactForm,
+} from './style'
+
+import {
   InputGroup,
   InputError,
   BtnPrimary,
   SuccessBanner,
-} from './style'
+} from '../../components/common/styles/shared'
 
 
 

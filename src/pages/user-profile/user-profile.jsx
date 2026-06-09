@@ -100,7 +100,7 @@ const UserProfile = () => {
   const {
     register: registerProfile,
     handleSubmit: handleSubmitProfile,
-    formState: { errors: profileErrors, touchedFields: touchedProfile },
+    formState: { errors: profileErrors, touchedFields: touchedProfile, dirtyFields: dirtyProfileFields },
     reset: resetProfile
   } = useForm({
     resolver: zodResolver(profileUpdateSchema),
@@ -112,7 +112,7 @@ const UserProfile = () => {
   const {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
-    formState: { errors: passwordErrors, touchedFields: touchedPassword },
+    formState: { errors: passwordErrors, touchedFields: touchedPassword, dirtyFields: dirtyPasswordFields },
     reset: resetPassword
   } = useForm({
     resolver: zodResolver(passwordUpdateSchema),
@@ -186,7 +186,7 @@ const UserProfile = () => {
             <input id="profile-email" defaultValue={profile.email} disabled style={{ opacity: 0.5 }} />
           </InputGroup>
 
-          <BtnPrimary style={{ marginTop: '0.5rem' }} disabled={profileErrors.name || profileErrors.lastName} onClick={handleSubmitProfile(data => handleUpdateProfile(data))}>Save Changes</BtnPrimary>
+          <BtnPrimary style={{ marginTop: '0.5rem' }} disabled={(!dirtyProfileFields.name && !dirtyProfileFields.lastName) || profileErrors.name || profileErrors.lastName} onClick={handleSubmitProfile(data => handleUpdateProfile(data))}>Save Changes</BtnPrimary>
         </SectionCard>
       )}
 
@@ -219,7 +219,7 @@ const UserProfile = () => {
             )}
           </InputGroup>
 
-          <BtnPrimary style={{ marginTop: '0.5rem' }} disabled={passwordErrors.newPassword || passwordErrors.currentPassword} onClick={handleSubmitPassword(data => handleUpdatePassword(data))}> {isPendingPassword ? 'Updating...' : 'Update Password'}</BtnPrimary>
+          <BtnPrimary style={{ marginTop: '0.5rem' }} disabled={!dirtyPasswordFields.newPassword || !dirtyPasswordFields.confirmNewPassword || isPendingPassword || Object.keys(passwordErrors).length > 0} onClick={handleSubmitPassword(data => handleUpdatePassword(data))}> {isPendingPassword ? 'Updating...' : 'Update Password'}</BtnPrimary>
         </SectionCard>
       )}
 

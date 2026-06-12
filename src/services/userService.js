@@ -23,12 +23,12 @@ export const updateUser = async (id, updateData) => {
 }
 
 export const updateUserRole = async (id, role) => {
-    const { data } = await api.patch(`/users/${id}/role`, role);
+    const { data } = await api.patch(`/users/${id}/role`, { role });
     return data;
 }
 
 export const revokeUserRole = async (id, role) => {
-    const { data } = await api.patch(`/users/${id}/revoke-role`, role);
+    const { data } = await api.patch(`/users/${id}/revoke-role`, { role });
     return data;
 }
 

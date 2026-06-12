@@ -151,10 +151,15 @@ export const OrderChevron = styled.span`
 `
 
 export const OrderDetails = styled.div`
-  max-height: ${({ $open }) => ($open ? '500px' : '0')};
+  display: grid;
+  grid-template-rows: ${({ $open }) => ($open ? '1fr' : '0fr')};
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s ease;
+  border-top: 1px solid ${({ $open }) => ($open ? 'var(--border)' : 'transparent')};
   overflow: hidden;
-  transition: max-height 0.4s ease;
-  border-top: ${({ $open }) => ($open ? '1px solid var(--border)' : 'none')};
+
+  & > div {
+    min-height: 0;
+  }
 `
 
 export const OrderItemRow = styled.div`

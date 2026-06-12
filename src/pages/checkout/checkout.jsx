@@ -1,11 +1,16 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { XIcon, LockSimpleIcon } from '@phosphor-icons/react'
 import { useCart } from '../../contexts/CartContext'
 import { useToast } from '../../contexts/ToastContext'
+// form, schemas
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { billingDetailsSchema } from '../../schemas/checkoutSchemas'
+
 import { useCreateOrder } from '../../hooks/queries/useOrders'
 import {
   PageWrapper, PageHeader, Eyebrow,
-  InputGroup, FormRow, EmptyState,
+  InputGroup, InputError, FormRow, EmptyState,
 } from '../../components/common/styles/shared'
 import { QtyBtn, QtyValue, QuantityRow } from '../../components/common/styles/layout'
 import {
@@ -17,19 +22,37 @@ import {
 } from './style'
 
 const Checkout = () => {
-  const { cartItems, subtotal, changeQuantity, removeFromCart } = useCart()
+  const { cartItems, subtotal, changeQuantity, removeFromCart, clearCart } = useCart()
   const isEmpty = cartItems.length === 0
 
+  const { showToast } = useToast()
   const { mutate: orderMutation, isError } = useCreateOrder();
+  const navigate = useNavigate();
 
-  const finishCheckout = () => {
-    // TODO
-    // if (isError) {
-    //   useToast('Error trying to finish order. Please, try again.')  
-    // }
-    orderMutation(cartItems)
-    useToast('Finished your order. Thank you!')
+  const {
+    formState: { errors, touchedFields: touched, isDirty, isValid },
+    register: register,
+    handleSubmit: handleSubmit,
+    reset: reset
+  } = useForm({
+    resolver: zodResolver(billingDetailsSchema),
+    mode: 'all',
+    defaultValues: { name: '', lastName: '', email: '', phone: '', address: '', city: '', postalCode: '', paymentMethod: '' }
+  })
+
+  const finishCheckout = (data) => {
+    orderMutation({ billing_details: data, items: cartItems }, {
+      onSuccess: (response) => {
+        showToast(response.message || 'Finished your order. Thank you!')
+        clearCart()
+        navigate('/profile', { state: { currentTab: 'My Orders' } })
+      },
+      onError: (error) => showToast('Error trying to finish order. Please, try again.'),
+      onSettled: () => reset()
+    })
   }
+
+  const disableSubmitButton = !isDirty || !isValid;
 
   return (
     <PageWrapper>
@@ -105,43 +128,78 @@ const Checkout = () => {
 
             <BillingCard>
               <FormRow>
-                <InputGroup>
+                <InputGroup $hasError={touched.name && !!errors.name} $isValid={touched.name && !errors.name}>
                   <label htmlFor="billing-firstname">First Name</label>
-                  <input id="billing-firstname" />
+                  <input id="billing-firstname" {...register('name')} />
+                  {touched.name && errors.name && (
+                    <InputError>{errors.name.message}</InputError>
+                  )}
                 </InputGroup>
-                <InputGroup>
+                <InputGroup $hasError={touched.lastName && !!errors.lastName} $isValid={touched.lastName && !errors.lastName}>
                   <label htmlFor="billing-lastname">Last Name</label>
-                  <input id="billing-lastname" />
+                  <input id="billing-lastname" {...register('lastName')} />
+                  {touched.lastName && errors.lastName && (
+                    <InputError>{errors.lastName.message}</InputError>
+                  )}
                 </InputGroup>
               </FormRow>
 
-              <InputGroup>
+              <InputGroup $hasError={touched.email && !!errors.email} $isValid={touched.email && !errors.email}>
                 <label htmlFor="billing-email">Email</label>
-                <input id="billing-email" type="email" />
+                <input id="billing-email" type="email" {...register('email')} />
+                {touched.email && errors.email && (
+                  <InputError>{errors.email.message}</InputError>
+                )}
               </InputGroup>
 
-              <InputGroup>
+              <InputGroup $hasError={touched.phone && !!errors.phone} $isValid={touched.phone && !errors.phone}>
                 <label htmlFor="billing-phone">Phone</label>
-                <input id="billing-phone" />
+                <input id="billing-phone" type="text" {...register('phone')} />
+                {touched.phone && errors.phone && (
+                  <InputError>{errors.phone.message}</InputError>
+                )}
               </InputGroup>
 
-              <InputGroup>
+              <InputGroup $hasError={touched.address && !!errors.address} $isValid={touched.address && !errors.address}>
                 <label htmlFor="billing-address">Address</label>
-                <input id="billing-address" />
+                <input id="billing-address" {...register('address')} />
+                {touched.address && errors.address && (
+                  <InputError>{errors.address.message}</InputError>
+                )}
               </InputGroup>
 
               <FormRow>
-                <InputGroup>
+                <InputGroup $hasError={touched.city && !!errors.city} $isValid={touched.city && !errors.city}>
                   <label htmlFor="billing-city">City</label>
-                  <input id="billing-city" />
+                  <input id="billing-city" {...register('city')} />
+                  {touched.city && errors.city && (
+                    <InputError>{errors.city.message}</InputError>
+                  )}
                 </InputGroup>
-                <InputGroup>
+                <InputGroup $hasError={touched.postalCode && !!errors.postalCode} $isValid={touched.postalCode && !errors.postalCode}>
                   <label htmlFor="billing-zip">Postal Code</label>
-                  <input id="billing-zip" />
+                  <input id="billing-zip" {...register('postalCode')} />
+                  {touched.postalCode && errors.postalCode && (
+                    <InputError>{errors.postalCode.message}</InputError>
+                  )}
                 </InputGroup>
               </FormRow>
 
-              <SubmitBtn onClick={() => finishCheckout()}>
+              <InputGroup $hasError={touched.paymentMethod && !!errors.paymentMethod} $isValid={touched.paymentMethod && !errors.paymentMethod}>
+                <label htmlFor="billing-payment-method">Payment Method</label>
+                <select id="billing-payment-method" {...register('paymentMethod')}>
+                  <option value="" disabled hidden>Select a payment method</option>
+
+                  <option value="cash">Cash</option>
+                  <option value="card">Card</option>
+                  <option value="virtual_wallet">Virtual Wallet</option>
+                </select>
+                {touched.paymentMethod && errors.paymentMethod && (
+                  <InputError>{errors.paymentMethod.message}</InputError>
+                )}
+              </InputGroup>
+
+              <SubmitBtn onClick={handleSubmit(data => finishCheckout(data))} disabled={disableSubmitButton}>
                 Confirm Order — ${subtotal}
               </SubmitBtn>
 

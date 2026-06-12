@@ -178,3 +178,170 @@ export const StatusSelect = styled.select`
 
   &:focus { border-color: var(--gold-border); }
 `
+
+/* Styled File Upload Components */
+export const UploadZone = styled.label`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+  background: var(--bg-card);
+  padding: 1.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  text-align: center;
+  margin-top: 0.25rem;
+
+  &:hover {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.03);
+  }
+
+  svg {
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+    transition: transform 0.25s ease;
+  }
+
+  &:hover svg {
+    transform: translateY(-3px);
+  }
+
+  span.title {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  span.subtitle {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+`
+
+export const UploadPreviewContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--gold-border);
+  margin-top: 0.5rem;
+  transition: all 0.25s ease;
+`
+
+export const UploadPreviewThumb = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 1px solid var(--border);
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.25rem;
+  }
+`
+
+export const UploadPreviewInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+
+  .name {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .meta {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    margin-top: 0.1rem;
+  }
+`
+
+export const UploadClearBtn = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #e53e3e;
+    background: rgba(229, 62, 62, 0.08);
+  }
+`
+
+/* Order Details Modal Elements */
+export const DetailGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1rem;
+`
+
+export const DetailSectionTitle = styled.h4`
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`
+
+export const DetailList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  font-size: 0.88rem;
+  margin-bottom: 2rem;
+`
+
+export const DetailItem = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+export const DetailLabel = styled.span`
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.15rem;
+`
+
+export const DetailValue = styled.span`
+  color: ${({ $highlight }) => ($highlight ? 'var(--gold)' : 'var(--text)')};
+  font-weight: ${({ $highlight }) => ($highlight ? '600' : '400')};
+  font-size: ${({ $highlight }) => ($highlight ? '1rem' : 'inherit')};
+  text-transform: ${({ $capitalize }) => ($capitalize ? 'capitalize' : 'none')};
+`
+

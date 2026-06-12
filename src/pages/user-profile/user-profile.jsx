@@ -24,16 +24,66 @@ import { useUserOrders, useUserProfile, useUpdateUser } from '../../hooks/querie
 import { useUpdatePassword } from '../../hooks/queries/useAuth'
 import { useOrderItems } from '../../hooks/queries/useOrders'
 import { useLogout } from '../../hooks/queries/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import Spinner from '../../components/common/Spinner'
 
 const TABS = ['Profile', 'Password', 'My Orders']
 
+/* ─── OrderRow Helper Component ─── */
+const OrderRow = ({ order, isOpen, onToggle }) => {
+  const [hasBeenOpened, setHasBeenOpened] = useState(false)
+
+  if (isOpen && !hasBeenOpened) {
+    setHasBeenOpened(true)
+  }
+
+  const { data: orderItems, isError, error } = useOrderItems(hasBeenOpened ? order.id : null)
+
+  return (
+    <OrderCard>
+      <OrderSummary onClick={onToggle}>
+        <OrderId>#{order.order_number}</OrderId>
+        <OrderDate>{order.created_at?.slice(0, 10)}</OrderDate>
+        <StatusBadge $status={order.state}>{order.state}</StatusBadge>
+        <OrderTotal>${order.total}</OrderTotal>
+        <OrderChevron $open={isOpen}>
+          <CaretDownIcon size={16} />
+        </OrderChevron>
+      </OrderSummary>
+
+      <OrderDetails $open={isOpen}>
+        <div>
+          {isError ? (
+            <p style={{ color: '#e53e3e', fontSize: '0.82rem', padding: '1.5rem 1.5rem' }}>
+              Error: {error.message}
+            </p>
+          ) : (
+            orderItems?.map((item, idx) => (
+              <OrderItemRow key={idx}>
+                <OrderItemName>{item.product_name} × {item.quantity}</OrderItemName>
+                <OrderItemMeta>${item.sub_total}</OrderItemMeta>
+              </OrderItemRow>
+            ))
+          )}
+        </div>
+      </OrderDetails>
+    </OrderCard>
+  )
+}
+
 /* ─── Component ─── */
-const UserProfile = () => {
-  const [activeTab, setActiveTab] = useState('Profile')
-  const [expandedOrder, setExpandedOrder] = useState(null)
+const UserProfile = ({ currentTab }) => {
+  const location = useLocation()
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState(location.state?.currentTab || currentTab || 'Profile')
+  const [expandedOrder, setExpandedOrder] = useState(null)
   const { showToast } = useToast()
+
+  useEffect(() => {
+    if (location.state?.currentTab) {
+      setActiveTab(location.state.currentTab)
+    }
+  }, [location.state?.currentTab])
 
   const toggleOrder = (id) => {
     setExpandedOrder(expandedOrder === id ? null : id)
@@ -49,8 +99,6 @@ const UserProfile = () => {
   const { mutate: updatePasswordMutation, isPending: isPendingPassword } = useUpdatePassword();
   // orders
   const { data: orders, isPending: isPendingOrders, isError: isErrorOrders, error: errorOrders } = useUserOrders(user?.id);
-  // order items
-  const { data: orderItems, isPending: isPendingItems, isError: isErrorItems, error: errorItems } = useOrderItems(expandedOrder);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -72,7 +120,7 @@ const UserProfile = () => {
           showToast(response.message)
         },
         onError: (error) => {
-          showToast(error.response?.data?.message)
+          showToast('Failed to update profile. Please try again.');
         },
         onSettled: () => {
           resetProfile()
@@ -88,7 +136,7 @@ const UserProfile = () => {
           showToast(response.message)
         },
         onError: (error) => {
-          showToast(error.response?.data?.message || 'Failed to update password')
+          showToast('Failed to update password. Please try again.');
         },
         onSettled: () => {
           resetPassword()
@@ -128,7 +176,13 @@ const UserProfile = () => {
   }, [profile, resetProfile])
 
 
-  if (isPendingProfile || isPendingOrders) return <p>Loading...</p>
+  if (isPendingProfile || isPendingOrders) {
+    return (
+      <PageWrapper style={{ justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Spinner size="40px" />
+      </PageWrapper>
+    )
+  }
   if (isErrorProfile || isErrorOrders) return <p>Error: {errorProfile?.message || errorOrders?.message}</p>
 
   return (
@@ -233,28 +287,14 @@ const UserProfile = () => {
             </EmptyState>
           ) : (
             <OrdersList>
+              {console.log(orders)}
               {orders.map((order) => (
-                <OrderCard key={order.id}>
-                  <OrderSummary onClick={() => toggleOrder(order.id)}>
-                    <OrderId>#{order.id}</OrderId>
-                    <OrderDate>{order.date}</OrderDate>
-                    <StatusBadge $status={order.state}>{order.state}</StatusBadge>
-                    <OrderTotal>${order.total}</OrderTotal>
-                    <OrderChevron $open={expandedOrder === order.id}>
-                      <CaretDownIcon size={16} />
-                    </OrderChevron>
-                  </OrderSummary>
-
-                  <OrderDetails $open={expandedOrder === order.id}>
-                    {/* GET ORDER ITEMS */}
-                    {isPendingItems ? <p>Loading details...1</p> : isErrorItems ? <p>Error: {errorItems.message}</p> : orderItems?.map((item, idx) => (
-                      <OrderItemRow key={idx}>
-                        <OrderItemName>{item.product_name} × {item.quantity}</OrderItemName>
-                        <OrderItemMeta>${item.sub_total}</OrderItemMeta>
-                      </OrderItemRow>
-                    ))}
-                  </OrderDetails>
-                </OrderCard>
+                <OrderRow
+                  key={order.id}
+                  order={order}
+                  isOpen={expandedOrder === order.id}
+                  onToggle={() => toggleOrder(order.id)}
+                />
               ))}
             </OrdersList>
           )}

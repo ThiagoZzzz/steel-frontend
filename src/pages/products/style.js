@@ -194,3 +194,137 @@ export const AddCartBtn = styled.button`
     border-color: var(--gold);
   }
 `
+
+// ── Search & Filters toolbar ──────────────────────────────
+export const FiltersToolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+`
+
+export const SearchField = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 20vw;
+  flex: 1 1 220px;
+  padding: 0.55rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  transition: border-color 0.25s;
+
+  &:focus-within {
+    border-color: var(--gold-border);
+  }
+
+  svg { color: var(--text-muted); flex-shrink: 0; }
+
+  input {
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text);
+    letter-spacing: 0.06em;
+
+    &::placeholder { color: var(--text-muted); }
+  }
+`
+
+// ── Price range slider ────────────────────────────────────
+export const SliderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 200px;
+`
+
+export const SliderLabel = styled.span`
+  font-family: 'Jost', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+`
+
+export const SliderRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+`
+
+export const RangeInput = styled.input.attrs({ type: 'range' })`
+  flex: 1;
+  accent-color: var(--gold);
+  cursor: pointer;
+  height: 2px;
+`
+
+export const SliderValue = styled.span`
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  color: var(--gold);
+  min-width: 52px;
+  text-align: right;
+`
+
+// ── Sort selector ─────────────────────────────────────────
+export const SortSelect = styled.select`
+  padding: 0.55rem 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s;
+
+  &:focus { border-color: var(--gold-border); }
+`
+
+// ── Infinite scroll sentinel & spinner ───────────────────
+export const ScrollSentinel = styled.div`
+  height: 1px;
+  margin-top: 2rem;
+`
+
+export const LoadingRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 0;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+`
+
+export const Spinner = styled.span`
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+`
+
+export const EndMessage = styled.p`
+  text-align: center;
+  padding: 1.5rem 0 3rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+`

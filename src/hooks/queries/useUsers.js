@@ -12,15 +12,16 @@ import {
 // query keys
 export const userKeys = {
     all: ['users'],
+    list: (params) => ['users', 'list', params],
     profile: (id) => ['users', id, 'profile'],
     orders: (id) => ['users', id, 'orders'],
 };
 
-// queries
-export const useUsers = () => {
+// data = { users, meta }
+export const useUsers = (params = {}) => {
     return useQuery({
-        queryKey: userKeys.all,
-        queryFn: fetchUsers,
+        queryKey: userKeys.list(params),
+        queryFn: () => fetchUsers(params),
     });
 };
 

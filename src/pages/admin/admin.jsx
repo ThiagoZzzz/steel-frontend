@@ -17,6 +17,7 @@ import {
   StatusSelect,
   UploadZone, UploadPreviewContainer, UploadPreviewThumb, UploadPreviewInfo, UploadClearBtn,
   DetailGrid, DetailSectionTitle, DetailList, DetailItem, DetailLabel, DetailValue,
+  CheckboxGroup, CheckboxLabel,
 } from './style'
 import OrdersSkeleton from '../../components/skeletons/OrdersSkeleton'
 
@@ -35,6 +36,16 @@ import { useToast } from '../../contexts/ToastContext'
 
 const TABS = ['Users', 'Products', 'Orders']
 
+// ─ Debounce hook ────────────────────────────────────────────
+function useDebounce(value, delay = 350) {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(t)
+  }, [value, delay])
+  return debounced
+}
+
 /* ─── Component ─── */
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('Users')
@@ -46,14 +57,46 @@ const Admin = () => {
   const [editingUser, setEditingUser] = useState(null)
   const [selectedRole, setSelectedRole] = useState('user')
   const [confirmDelete, setConfirmDelete] = useState(null)
-  const [search, setSearch] = useState('')
+
+  // ─ Search inputs (raw, con debounce) ─
+  const [userSearch, setUserSearch] = useState('')
+  const [productSearch, setProductSearch] = useState('')
+  const [orderSearch, setOrderSearch] = useState('')
+
+  // ─ Order filters ─
+  const [orderState, setOrderState] = useState('')
+  const [orderPayment, setOrderPayment] = useState('')
+
+  const debouncedUserSearch = useDebounce(userSearch)
+  const debouncedProductSearch = useDebounce(productSearch)
+  const debouncedOrderSearch = useDebounce(orderSearch)
 
   const { showToast } = useToast()
 
+  // ─ Params por entidad ─
+  const usersParams = {}
+  if (debouncedUserSearch) usersParams.search = debouncedUserSearch
+
+  const productsParams = {}
+  if (debouncedProductSearch) productsParams.search = debouncedProductSearch
+
+  const ordersParams = {}
+  if (debouncedOrderSearch) ordersParams.search = debouncedOrderSearch
+  if (orderState) ordersParams.state = orderState
+  if (orderPayment) ordersParams.payment_method = orderPayment
+
   // ── Query hooks ──
-  const { data: users, isPending: isPendingUsers } = useUsers();
-  const { data: products, isPending: isPendingProducts } = useProducts();
-  const { data: orders, isPending: isPendingOrders } = useOrders();
+  const { data: usersData, isPending: isPendingUsers } = useUsers(usersParams);
+  const { data: productsData, isPending: isPendingProducts } = useProducts(productsParams);
+  const { data: ordersData, isPending: isPendingOrders } = useOrders(ordersParams);
+
+  // Extraer arrays y meta
+  const users = usersData?.users ?? []
+  const products = productsData?.products ?? []
+  const orders = ordersData?.orders ?? []
+  const usersMeta = usersData?.meta ?? {}
+  const productsMeta = productsData?.meta ?? {}
+  const ordersMeta = ordersData?.meta ?? {}
 
   // ── Mutations ──
   // Users
@@ -79,7 +122,7 @@ const Admin = () => {
   } = useForm({
     resolver: zodResolver(productSchema),
     mode: 'all',
-    defaultValues: { name: '', description: '', price: '', stock: '', category: '', image: null }
+    defaultValues: { name: '', description: '', price: '', stock: '', category: '', image: null, discount: false, featured: false }
   })
 
   const selectedImage = watchProduct('image')
@@ -119,7 +162,6 @@ const Admin = () => {
     }
   })
 
-  // ── Sync Product form when editing ──
   useEffect(() => {
     if (editingProduct) {
       resetProduct({
@@ -129,6 +171,8 @@ const Admin = () => {
         stock: editingProduct.stock || '',
         category: editingProduct.category || '',
         image: null,
+        discount: editingProduct.discount ?? false,
+        featured: editingProduct.featured ?? false,
       })
     }
   }, [editingProduct, resetProduct])
@@ -153,7 +197,7 @@ const Admin = () => {
   // ── Product Modal helpers ──
   const openCreateProduct = () => {
     setEditingProduct(null)
-    resetProduct({ name: '', description: '', price: '', stock: '', category: '', image: null })
+    resetProduct({ name: '', description: '', price: '', stock: '', category: '', image: null, discount: false, featured: false })
     setShowProductModal(true)
   }
   const openEditProduct = (p) => { setEditingProduct(p); setShowProductModal(true) }
@@ -177,6 +221,8 @@ const Admin = () => {
     if (data.description) formData.append('description', data.description)
     if (data.category) formData.append('category', data.category)
     if (data.image?.[0]) formData.append('image', data.image[0])
+    formData.append('discount', data.discount ?? false)
+    formData.append('featured', data.featured ?? false)
 
     if (editingProduct) {
       updateProductMutation(
@@ -271,15 +317,15 @@ const Admin = () => {
       <AdminGrid>
         <StatCard>
           <span>Total Users</span>
-          <h2>{users?.length}</h2>
+          <h2>{usersMeta.total ?? users.length}</h2>
         </StatCard>
         <StatCard>
           <span>Products</span>
-          <h2>{products?.length}</h2>
+          <h2>{productsMeta.total ?? products.length}</h2>
         </StatCard>
         <StatCard>
           <span>Orders</span>
-          <h2>{orders?.length}</h2>
+          <h2>{ordersMeta.total ?? orders.length}</h2>
         </StatCard>
       </AdminGrid>
 
@@ -296,9 +342,9 @@ const Admin = () => {
         <>
           <ToolbarRow>
             <SearchInput
-              placeholder="Search users…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search users by name, last name or email…"
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
             />
           </ToolbarRow>
 
@@ -315,7 +361,6 @@ const Admin = () => {
               </TableHead>
               <TableBody>
                 {users
-                  .filter((u) => u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase()))
                   .map((user) => (
                     <tr key={user.id}>
                       <td>
@@ -354,15 +399,14 @@ const Admin = () => {
           <ToolbarRow>
             <SearchInput
               placeholder="Search products…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={productSearch}
+              onChange={(e) => setProductSearch(e.target.value)}
             />
             <BtnPrimary onClick={openCreateProduct}>+ Add Product</BtnPrimary>
           </ToolbarRow>
 
           <AdminProductGrid>
             {products
-              .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
               .map((product) => (
                 <AdminProductCard key={product.id}>
                   <AdminCardImage>
@@ -387,50 +431,79 @@ const Admin = () => {
 
       {/* ── Orders Section ── */}
       {activeTab === 'Orders' && (
-        <TableResponsive>
-          <DataTable>
-            <TableHead>
-              <tr>
-                <th>Order</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Payment Method</th>
-                <th>Total</th>
-                <th>Actions</th>
-              </tr>
-            </TableHead>
-            <TableBody>
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td style={{ color: 'var(--gold)', fontWeight: 500 }}>#{order.order_number || order.id}</td>
-                  <td>{order.user_email}</td>
-                  <td style={{ color: 'var(--text-dim)' }}>{order.created_at?.slice(0, 10)}</td>
-                  <td>
-                    <StatusSelect
-                      defaultValue={order.state}
-                      onChange={(e) => handleOrderStatusInline(order.id, e.target.value)}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="ready">Ready</option>
-                      <option value="cancel">Cancel</option>
-                    </StatusSelect>
-                  </td>
-                  <td style={{ color: 'var(--gold)', fontWeight: 500 }}>{order.payment_method.replaceAll('_', ' ')}</td>
-                  <td style={{ color: 'var(--gold)', fontWeight: 500 }}>${order.total}</td>
-                  <td>
-                    <ActionGroup>
-                      <ActionBtn onClick={() => openEditOrder(order)}>Edit</ActionBtn>
-                      <ActionBtn $variant="danger" onClick={() => setConfirmDelete({ type: 'order', id: order.id, name: order.order_number || order.id })}>
-                        Delete
-                      </ActionBtn>
-                    </ActionGroup>
-                  </td>
+        <>
+          <ToolbarRow>
+            <SearchInput
+              placeholder="Filter by customer email…"
+              value={orderSearch}
+              onChange={(e) => setOrderSearch(e.target.value)}
+            />
+            <StatusSelect
+              value={orderState}
+              onChange={(e) => setOrderState(e.target.value)}
+              aria-label="Filter by status"
+            >
+              <option value="">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="ready">Ready</option>
+              <option value="cancel">Cancelled</option>
+            </StatusSelect>
+            <StatusSelect
+              value={orderPayment}
+              onChange={(e) => setOrderPayment(e.target.value)}
+              aria-label="Filter by payment"
+            >
+              <option value="">All payments</option>
+              <option value="cash">Cash</option>
+              <option value="card">Card</option>
+              <option value="virtual_wallet">Virtual Wallet</option>
+            </StatusSelect>
+          </ToolbarRow>
+          <TableResponsive>
+            <DataTable>
+              <TableHead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Payment Method</th>
+                  <th>Total</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </TableBody>
-          </DataTable>
-        </TableResponsive>
+              </TableHead>
+              <TableBody>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    <td style={{ color: 'var(--gold)', fontWeight: 500 }}>#{order.order_number || order.id}</td>
+                    <td>{order.user_email}</td>
+                    <td style={{ color: 'var(--text-dim)' }}>{order.created_at?.slice(0, 10)}</td>
+                    <td>
+                      <StatusSelect
+                        defaultValue={order.state}
+                        onChange={(e) => handleOrderStatusInline(order.id, e.target.value)}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="ready">Ready</option>
+                        <option value="cancel">Cancel</option>
+                      </StatusSelect>
+                    </td>
+                    <td style={{ color: 'var(--gold)', fontWeight: 500 }}>{order.payment_method.replaceAll('_', ' ')}</td>
+                    <td style={{ color: 'var(--gold)', fontWeight: 500 }}>${order.total}</td>
+                    <td>
+                      <ActionGroup>
+                        <ActionBtn onClick={() => openEditOrder(order)}>Edit</ActionBtn>
+                        <ActionBtn $variant="danger" onClick={() => setConfirmDelete({ type: 'order', id: order.id, name: order.order_number || order.id })}>
+                          Delete
+                        </ActionBtn>
+                      </ActionGroup>
+                    </td>
+                  </tr>
+                ))}
+              </TableBody>
+            </DataTable>
+          </TableResponsive>
+        </>
       )}
 
       {/* ── Product Modal (Create / Edit) ── */}
@@ -484,6 +557,17 @@ const Admin = () => {
                 <option value="premium">Premium</option>
               </select>
             </InputGroup>
+
+            <CheckboxGroup>
+              <CheckboxLabel htmlFor="product-discount">
+                <input id="product-discount" type="checkbox" {...registerProduct('discount')} />
+                Discount Available
+              </CheckboxLabel>
+              <CheckboxLabel htmlFor="product-featured">
+                <input id="product-featured" type="checkbox" {...registerProduct('featured')} />
+                Featured Product
+              </CheckboxLabel>
+            </CheckboxGroup>
 
             <InputGroup>
               <label>Product Image</label>
@@ -687,7 +771,7 @@ const Admin = () => {
 
             <ModalActions>
               <BtnSecondary onClick={closeOrderModal}>Cancel</BtnSecondary>
-              <BtnPrimary 
+              <BtnPrimary
                 onClick={handleSubmitOrder(handleOrderSubmit)}
                 disabled={!isDirtyOrder || !isValidOrder}
               >

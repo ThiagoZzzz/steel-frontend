@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 
-/* ─── Admin-specific styles (extend shared components) ─── */
-
 export const AdminGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -343,5 +341,61 @@ export const DetailValue = styled.span`
   font-weight: ${({ $highlight }) => ($highlight ? '600' : '400')};
   font-size: ${({ $highlight }) => ($highlight ? '1rem' : 'inherit')};
   text-transform: ${({ $capitalize }) => ($capitalize ? 'capitalize' : 'none')};
+`
+
+export const CheckboxGroup = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+`
+
+export const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    appearance: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:checked {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    &:checked::after {
+      content: '✓';
+      color: var(--bg-dark);
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    &:focus {
+      border-color: var(--gold-border);
+    }
+  }
+
+  &:hover {
+    color: var(--text);
+    input[type="checkbox"] {
+      border-color: var(--gold-border);
+    }
+  }
 `
 

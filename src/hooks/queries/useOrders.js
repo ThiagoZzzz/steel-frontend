@@ -11,15 +11,15 @@ import {
 // query keys
 export const orderKeys = {
     all: ['orders'],
+    list: (params) => ['orders', 'list', params],
     detail: (id) => ['orders', id],
     items: (id) => ['orders', id, 'items'],
 };
 
-// queries
-export const useOrders = () => {
+export const useOrders = (params = {}) => {
     return useQuery({
-        queryKey: orderKeys.all,
-        queryFn: fetchOrders,
+        queryKey: orderKeys.list(params),
+        queryFn: () => fetchOrders(params),
     });
 };
 

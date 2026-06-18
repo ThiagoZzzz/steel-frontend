@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import Carousel from '../../components/common/carousel'
 import CarouselSkeleton from '../../components/skeletons/CarouselSkeleton'
+import { useProducts } from '../../hooks/queries/useProducts'
 
 import {
   HomeContainer,
@@ -16,14 +17,9 @@ import {
   FeaturedDivider,
 } from './style'
 
-// TODO: reemplazar con un hook de API para productos destacados
-// Ejemplo: const { data: featuredProducts, isPending } = useFeaturedProducts()
-import { getFeaturedProducts } from '../../data/products'
-const featuredProducts = getFeaturedProducts()
-const isPending = false // ← cambiar a isPending del hook cuando se implemente
-
 const Home = () => {
   const navigate = useNavigate()
+  const { data: featuredProducts, isPending } = useProducts({ featured: true, limit: 10 })
 
   return (
     <HomeContainer>
@@ -65,7 +61,7 @@ const Home = () => {
       {isPending ? (
         <CarouselSkeleton count={4} />
       ) : (
-        <Carousel products={featuredProducts} />
+        <Carousel products={featuredProducts?.products} />
       )}
 
     </HomeContainer>

@@ -1,10 +1,10 @@
 import api from "../api/steel";
 
-// await new Promise(resolve => setTimeout(resolve, 5000));
-
-export const fetchUsers = async () => {
-    const { data } = await api.get('/users');
-    return data.users;
+export const fetchUsers = async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const url = qs ? `/users?${qs}` : '/users';
+    const { data, meta } = await api.get(url);
+    return { users: data.users, meta };
 }
 
 export const fetchProfile = async (id) => {

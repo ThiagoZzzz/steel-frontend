@@ -1,8 +1,10 @@
 import api from "../api/steel";
 
-export const fetchProducts = async () => {
-    const { data } = await api.get('/products');
-    return data.products;
+export const fetchProducts = async (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    const url = qs ? `/products?${qs}` : '/products';
+    const { data, meta } = await api.get(url);
+    return { products: data.products, meta };
 }
 
 export const fetchProductByID = async (id) => {

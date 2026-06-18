@@ -16,6 +16,8 @@ export const productSchema = z.object({
         z.string().min(3, 'Category must be at least 3 characters').nullish(),
     ),
     image: z.any().optional(),
+    discount: z.boolean().optional(),
+    featured: z.boolean().optional(),
 });
 
 // todos los campos son opcionales

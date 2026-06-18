@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import {
     fetchProducts,
     fetchProductByID,
@@ -11,15 +11,32 @@ import {
 // query keys
 export const productKeys = {
     all: ['products'],
+    list: (params) => ['products', 'list', params],
+    infinite: (filters) => ['products', 'infinite', filters],
     detail: (id) => ['products', id],
     slug: (slug) => ['products', 'slug', slug],
 };
 
-// queries
-export const useProducts = () => {
+// ── Página pública /products — Infinite scroll ──
+// data.pages es un array de { products, meta } por cada página cargada.
+// Usar: data.pages.flatMap(p => p.products) para obtener todos los productos acumulados.
+export const useProductsInfinite = (filters = {}) => {
+    return useInfiniteQuery({
+        queryKey: productKeys.infinite(filters),
+        queryFn: ({ pageParam = 1 }) => fetchProducts({ ...filters, page: pageParam }),
+        getNextPageParam: (lastPage) =>
+            lastPage.meta.currentPage < lastPage.meta.totalPages
+                ? lastPage.meta.currentPage + 1
+                : undefined,
+        initialPageParam: 1,
+    });
+};
+
+// data = { products, meta }
+export const useProducts = (params = {}) => {
     return useQuery({
-        queryKey: productKeys.all,
-        queryFn: fetchProducts,
+        queryKey: productKeys.list(params),
+        queryFn: () => fetchProducts(params),
     });
 };
 
@@ -43,7 +60,6 @@ export const useProductBySlug = (slug) => {
 export const useCreateProduct = () => {
     const queryClient = useQueryClient();
 
-    // ejecuta la creación y cuando finaliza éxitosamente inválida las querys con key: ['products'], evitando mantener data desactualizada de llamadas anteriores
     return useMutation({
         mutationFn: (dataProduct) => createProduct(dataProduct),
         onSuccess: () => {

@@ -40,7 +40,7 @@ import {
     DrawerCheckoutBtn,
     DrawerClearBtn,
 } from './styles/layout'
-import ThemeToggle from './ThemeToggle'
+import ThemeToggle from './themeToggle'
 
 
 import { useMenu } from '../../contexts/MenuContext'

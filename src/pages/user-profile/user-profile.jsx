@@ -25,7 +25,7 @@ import { useUpdatePassword } from '../../hooks/queries/useAuth'
 import { useOrderItems } from '../../hooks/queries/useOrders'
 import { useLogout } from '../../hooks/queries/useAuth'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Spinner from '../../components/common/Spinner'
+import Spinner from '../../components/common/spinner'
 
 const TABS = ['Profile', 'Password', 'My Orders']
 

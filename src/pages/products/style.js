@@ -186,12 +186,20 @@ export const AddCartBtn = styled.button`
   font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition: all 0.25s ease;
 
   &:hover {
     background: var(--gold);
     color: var(--bg-dark);
     border-color: var(--gold);
+  }
+
+  &:disabled {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    border-color: var(--border);
+    cursor: not-allowed;
+    pointer-events: none;
   }
 `
 

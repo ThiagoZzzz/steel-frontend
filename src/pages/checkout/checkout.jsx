@@ -47,7 +47,7 @@ const Checkout = () => {
         clearCart()
         navigate('/profile', { state: { currentTab: 'My Orders' } })
       },
-      onError: (error) => showToast('Error trying to finish order. Please, try again.'),
+      onError: (error) => showToast(error.message || 'Error trying to finish order. Please, try again.'),
       onSettled: () => reset()
     })
   }

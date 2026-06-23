@@ -49,7 +49,7 @@ const ProductDetail = () => {
 
   const { data: product, isPending, isError, error } = useProductBySlug(slug)
 
-  const inStock = product?.stock > 0
+  const inStock = Number(product?.stock) > 0
 
   if (isError) {
     return (

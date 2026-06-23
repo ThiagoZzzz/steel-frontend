@@ -256,16 +256,30 @@ const Products = () => {
                     <CardName>{product.name}</CardName>
                   </Link>
                   <CardDesc>{product.description}</CardDesc>
-                  <CategoryBadge>{product.category}</CategoryBadge>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '0.5rem' }}>
+                    <CategoryBadge style={{ marginTop: 0 }}>{product.category}</CategoryBadge>
+                    {Number(product.stock) === 0 && (
+                      <span style={{ color: '#e53e3e', fontSize: '0.62rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                        • Out of Stock
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <CardMeta>
                   <span className="price">${product.price}</span>
                   <AddCartBtn
                     onClick={() => handleAddToCart(product)}
                     aria-label={`Add ${product.name} to cart`}
+                    disabled={Number(product.stock) === 0}
                   >
-                    <PlusIcon size={24} />
-                    Add to Cart
+                    {Number(product.stock) === 0 ? (
+                      'Out of Stock'
+                    ) : (
+                      <>
+                        <PlusIcon size={24} />
+                        Add to Cart
+                      </>
+                    )}
                   </AddCartBtn>
                 </CardMeta>
               </CardInfo>

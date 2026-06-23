@@ -90,7 +90,11 @@ api.interceptors.response.use(
                 isRefreshing = false;
             }
         }
-        // rechaza cualquier otro error
+        // normaliza los errores enviados por el servidor
+        const serverMessage = error.response?.data?.message;
+        if (serverMessage) {
+            error.message = serverMessage;
+        }
         return Promise.reject(error);
     }
 );

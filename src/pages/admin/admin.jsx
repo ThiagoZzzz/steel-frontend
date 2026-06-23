@@ -559,7 +559,7 @@ const Admin = () => {
                 <option value="">Select category</option>
                 <option value="classic">Classic</option>
                 <option value="sport">Sport</option>
-                <option value="premium">Premium</option>
+                <option value="luxury">Luxury</option>
               </select>
             </InputGroup>
 

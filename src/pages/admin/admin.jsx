@@ -415,7 +415,12 @@ const Admin = () => {
                   <AdminCardBody>
                     <h4>{product.name}</h4>
                     <p>{product.description}</p>
-                    <span className="price">${product.price}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '0.5rem' }}>
+                      <span className="price">${product.price}</span>
+                      <StatusBadge $status={Number(product.stock) === 0 ? 'outofstock' : Number(product.stock) < 5 ? 'lowstock' : 'instock'}>
+                        {Number(product.stock) === 0 ? 'Out of Stock' : `${product.stock} in stock`}
+                      </StatusBadge>
+                    </div>
                   </AdminCardBody>
                   <AdminCardActions>
                     <ActionBtn onClick={() => openEditProduct(product)}>Edit</ActionBtn>

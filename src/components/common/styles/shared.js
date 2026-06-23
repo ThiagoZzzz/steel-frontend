@@ -93,6 +93,9 @@ const statusColors = {
   cancel: { bg: 'rgba(229,62,62,0.10)', color: '#e53e3e', border: 'rgba(229,62,62,0.25)' },
   admin: { bg: 'rgba(201,168,76,0.12)', color: 'var(--gold)', border: 'var(--gold-border)' },
   user: { bg: 'rgba(255,255,255,0.06)', color: 'var(--text-dim)', border: 'var(--border)' },
+  instock: { bg: 'rgba(72,187,120,0.10)', color: '#48bb78', border: 'rgba(72,187,120,0.25)' },
+  lowstock: { bg: 'rgba(237,137,54,0.10)', color: '#ed8936', border: 'rgba(237,137,54,0.25)' },
+  outofstock: { bg: 'rgba(229,62,62,0.10)', color: '#e53e3e', border: 'rgba(229,62,62,0.25)' },
 }
 
 export const StatusBadge = styled.span`

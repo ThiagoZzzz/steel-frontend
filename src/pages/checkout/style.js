@@ -83,10 +83,7 @@ export const CheckoutItemInfo = styled.div`
   }
 
   p {
-    font-family: 'Jost', sans-serif;
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    letter-spacing: 0.03em;
+    display: none; /* Description omitted in checkout row — name + image are sufficient */
   }
 `
 

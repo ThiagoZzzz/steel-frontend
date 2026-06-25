@@ -139,6 +139,12 @@ export const AdminCardBody = styled.div`
     font-size: 0.75rem;
     color: var(--text-dim);
     letter-spacing: 0.03em;
+    /* Limit description to 2 lines max */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
   }
 
   .price {

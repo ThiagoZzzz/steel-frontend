@@ -141,6 +141,12 @@ export const CardDesc = styled.p`
   color: var(--text-dim);
   letter-spacing: 0.04em;
   line-height: 1.5;
+  /* Limit description to 3 lines max */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
 `
 
 export const CategoryBadge = styled.span`

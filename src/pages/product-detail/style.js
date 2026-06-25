@@ -226,6 +226,11 @@ export const Description = styled.p`
   letter-spacing: 0.03em;
   line-height: 1.85;
   max-width: 460px;
+  /* Graceful cap at 8 lines — avoids runaway long descriptions */
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `
 
 export const MetaRow = styled.div`

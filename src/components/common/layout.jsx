@@ -40,7 +40,7 @@ import {
     DrawerCheckoutBtn,
     DrawerClearBtn,
 } from './styles/layout'
-import ThemeToggle from './themeToggle'
+import ThemeToggle from './ThemeToggle'
 
 
 import { useMenu } from '../../contexts/MenuContext'
@@ -59,22 +59,22 @@ const Layout = ({ children }) => {
             <NavbarContainer>
                 <StyledNav ref={navRef}>
                     <NavTop>
-                    <NavLeft>
-                        <NavItem
-                            as="button"
-                            onClick={toggleMenu}
-                            className="menu"
-                            aria-expanded={isMenuOpen}
-                            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                            style={{ background: 'none', border: 'none', padding: 0, flex: 'none' }}
-                        >
-                            {isMenuOpen
-                                ? <XIcon size={24} color="currentColor" weight="bold" />
-                                : <ListIcon size={24} color="currentColor" weight="bold" />
-                            }
-                        </NavItem>
-                        <ThemeToggle />
-                    </NavLeft>
+                        <NavLeft>
+                            <NavItem
+                                as="button"
+                                onClick={toggleMenu}
+                                className="menu"
+                                aria-expanded={isMenuOpen}
+                                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                                style={{ background: 'none', border: 'none', padding: 0, flex: 'none' }}
+                            >
+                                {isMenuOpen
+                                    ? <XIcon size={24} color="currentColor" weight="bold" />
+                                    : <ListIcon size={24} color="currentColor" weight="bold" />
+                                }
+                            </NavItem>
+                            <ThemeToggle />
+                        </NavLeft>
 
                         <NavItem as={Link} to={'/'} className="logo" style={{ textDecoration: 'none' }}>
                             <img src="/logo.png" alt="STEEL" className="brand-logo" />

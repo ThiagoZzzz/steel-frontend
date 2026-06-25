@@ -43,6 +43,7 @@ const Checkout = () => {
   const finishCheckout = (data) => {
     orderMutation({ billing_details: data, items: cartItems }, {
       onSuccess: (response) => {
+        console.log(data)
         showToast(response.message || 'Finished your order. Thank you!')
         clearCart()
         navigate('/profile', { state: { currentTab: 'My Orders' } })

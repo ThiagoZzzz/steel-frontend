@@ -89,9 +89,16 @@ const Carousel = ({ products = [] }) => {
                 <AddCartBtn
                   onClick={() => handleAddToCart(p)}
                   aria-label={`Add ${p.name} to cart`}
+                  disabled={Number(p.stock) === 0}
                 >
-                  <PlusIcon size={24} />
-                  Add to Cart
+                  {Number(p.stock) === 0 ? (
+                    'Out of Stock'
+                  ) : (
+                    <>
+                      <PlusIcon size={24} />
+                      Add to Cart
+                    </>
+                  )}
                 </AddCartBtn>
               </CardContent>
             </CarouselCard>

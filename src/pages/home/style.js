@@ -26,7 +26,12 @@ export const HeroSection = styled.section`
   min-height: 600px;
   display: flex;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
+
+  @media (max-width: 900px) {
+    position: relative;
+  }
 
   @media (max-width: 768px) {
     height: 100svh;
@@ -71,7 +76,12 @@ export const HeroOverlay = styled.div`
 export const HeroData = styled.div`
   z-index: 10;
   max-width: 620px;
+  padding: 0 3vw;
   animation: ${fadeUp} 0.9s ease both;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   h1 {
     font-family: 'Cormorant Garamond', serif;
@@ -94,6 +104,10 @@ export const HeroData = styled.div`
     letter-spacing: 0.02em;
   }
 
+  @media (max-width: 900px) {
+    max-width: 100%;
+  }
+
   @media (max-width: 768px) {
     padding: 0 6vw 10vh 6vw;
     max-width: 100%;
@@ -112,38 +126,15 @@ export const HeroEyebrow = styled.p`
   margin-bottom: 0 !important;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 
-  &::before {
+  &::before, &::after {
     content: '';
     display: inline-block;
     width: 24px;
     height: 1px;
     background: var(--gold);
-  }
-`;
-
-export const HeroProduct = styled.img`
-  position: absolute;
-  right: 8%;
-  top: 50%;
-  transform: translateY(-50%) rotate(-8deg);
-  height: clamp(300px, 55vh, 520px);
-  width: auto;
-  z-index: 5;
-  filter:
-    drop-shadow(0 0 40px rgba(201, 168, 76, 0.25))
-    drop-shadow(0 20px 60px rgba(0, 0, 0, 0.8));
-  animation: ${floatWatch} 5s ease-in-out infinite;
-
-  @media (max-width: 900px) {
-    right: -5%;
-    opacity: 0;
-    height: clamp(240px, 45vh, 380px);
-  }
-
-  @media (max-width: 600px) {
-    display: none;
   }
 `;
 

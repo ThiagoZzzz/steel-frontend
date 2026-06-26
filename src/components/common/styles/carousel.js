@@ -9,9 +9,14 @@ export const CarouselSection = styled.section`
 export const CarouselContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 4rem;
+
+  @media (max-width: 900px) {
+    max-width: 100%;
+    padding: 0 3.5rem;
+  }
 
   @media (max-width: 600px) {
     padding: 0 3rem;
@@ -80,6 +85,11 @@ export const CarouselCard = styled.div`
 
   @media (max-width: 900px) {
     flex: 0 0 calc(50% - 0.75rem);
+  }
+
+  @media (max-width: 700px) {
+    /* At narrow mid-range widths, show one full card + peek at next */
+    flex: 0 0 calc(80% - 0.75rem);
   }
 
   @media (max-width: 560px) {

@@ -10,7 +10,6 @@ import {
   HeroData,
   HeroEyebrow,
   HeroMedia,
-  HeroProduct,
   CTAButton,
   FeaturedBlock,
   FeaturedLabel,
@@ -46,10 +45,6 @@ const Home = () => {
           </CTAButton>
         </HeroData>
 
-        <HeroProduct
-          src="/reloj1.png"
-          alt="Featured STEEL timepiece"
-        />
       </HeroSection>
 
       <FeaturedBlock>

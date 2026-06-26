@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
 export const CarouselSection = styled.section`
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
   width: 100%;
   padding: 1rem 0 5rem;
   background: var(--bg-dark);
@@ -8,7 +12,7 @@ export const CarouselSection = styled.section`
 
 export const CarouselContainer = styled.div`
   position: relative;
-  width: 100%;
+  width: 90%;
   max-width: 760px;
   margin: 0 auto;
   padding: 0 4rem;
@@ -137,6 +141,7 @@ export const CardContent = styled.div`
 
 export const CarouselBtn = styled.button`
   position: absolute;
+  margin: .5rem;
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;

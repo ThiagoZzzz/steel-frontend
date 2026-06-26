@@ -23,6 +23,7 @@ export const HomeContainer = styled(Main)`
 export const HeroSection = styled.section`
   width: 100%;
   height: 100vh;
+  height: 100svh;
   min-height: 600px;
   display: flex;
   align-items: center;
@@ -34,6 +35,7 @@ export const HeroSection = styled.section`
   }
 
   @media (max-width: 768px) {
+    height: 100vh;
     height: 100svh;
     min-height: 560px;
   }

@@ -23,12 +23,14 @@ export const CarouselContainer = styled.div`
   }
 
   @media (max-width: 600px) {
+    max-width: 400px;
     padding: 0 3rem;
   }
 `;
 
 export const CarouselTrack = styled.div`
   display: flex;
+  width: 100%;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
@@ -73,6 +75,8 @@ export const AddCartBtn = styled.button`
 
 export const CarouselCard = styled.div`
   flex: 0 0 calc(85% - 1rem);
+  min-width: 0;
+  box-sizing: border-box;
   scroll-snap-align: start;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -92,7 +96,6 @@ export const CarouselCard = styled.div`
   }
 
   @media (max-width: 700px) {
-    /* At narrow mid-range widths, show one full card + peek at next */
     flex: 0 0 calc(80% - 0.75rem);
   }
 

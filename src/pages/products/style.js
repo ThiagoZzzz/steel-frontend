@@ -247,6 +247,10 @@ export const SearchField = styled.div`
 
     &::placeholder { color: var(--text-muted); }
   }
+
+  @media (max-width: 640px) {
+    max-width: 90vw;
+  }
 `
 
 // ── Price range slider ────────────────────────────────────
